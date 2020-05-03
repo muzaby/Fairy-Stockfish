@@ -545,8 +545,15 @@ namespace {
             }
     }
 
+    // nCheck
     if (pos.check_counting())
-        kingDanger += kingDanger * 7 / (3 + pos.checks_remaining(Them));
+    {
+        int checkDanger = kingDanger + 100 * popcount(unsafeChecks);
+        int remainingChecks = pos.checks_remaining(Them);
+        assert(remainingChecks > 0);
+        score -= make_score(1500 + checkDanger, 300 + checkDanger) / (remainingChecks * remainingChecks);
+        kingDanger += kingDanger * 7 / (3 + remainingChecks);
+    }
 
     Square s = file_of(ksq) == FILE_A ? ksq + EAST : file_of(ksq) == pos.max_file() ? ksq + WEST : ksq;
     Bitboard kingFlank = pos.max_file() == FILE_H ? KingFlank[file_of(ksq)] : file_bb(s) | adjacent_files_bb(s);
@@ -937,14 +944,6 @@ namespace {
                 onHold2 |= attacks;
             }
         }
-    }
-
-    // nCheck
-    if (pos.check_counting())
-    {
-        int remainingChecks = pos.checks_remaining(Us);
-        assert(remainingChecks > 0);
-        score += make_score(3600, 1000) / (remainingChecks * remainingChecks);
     }
 
     // Extinction
