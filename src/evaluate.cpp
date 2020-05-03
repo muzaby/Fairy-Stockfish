@@ -944,7 +944,7 @@ namespace {
     {
         int remainingChecks = pos.checks_remaining(Us);
         assert(remainingChecks > 0);
-        score += make_score(3600, 1000) / (remainingChecks * remainingChecks);
+        score += make_score(6000, 1800) / (1 + remainingChecks * remainingChecks);
     }
 
     // Extinction
