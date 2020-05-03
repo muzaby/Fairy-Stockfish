@@ -588,8 +588,14 @@ namespace {
     // Penalty if king flank is under attack, potentially moving toward the king
     score -= FlankAttacks * kingFlankAttack * (1 + 5 * pos.captures_to_hand() + pos.check_counting());
 
+    // nCheck
     if (pos.check_counting())
+    {
+        int remainingChecks = pos.checks_remaining(Them);
+        assert(remainingChecks > 0);
+        score -= make_score(1500 + kingDanger, 300 + kingDanger) / (remainingChecks * remainingChecks);
         score += make_score(0, mg_value(score) * 2 / (2 + pos.checks_remaining(Them)));
+    }
 
     if (pos.king_type() == WAZIR)
         score += make_score(0, mg_value(score) / 2);
@@ -937,14 +943,6 @@ namespace {
                 onHold2 |= attacks;
             }
         }
-    }
-
-    // nCheck
-    if (pos.check_counting())
-    {
-        int remainingChecks = pos.checks_remaining(Us);
-        assert(remainingChecks > 0);
-        score += make_score(3600, 1000) / (remainingChecks * remainingChecks);
     }
 
     // Extinction
